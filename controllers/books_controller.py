@@ -1,6 +1,7 @@
 from models.Book import Book                  # This is the module that will communicate with the book table
 from main import db                           # Db connection
 from flask import Blueprint, request, jsonify # We need to be able to create a blueprint and retrieve and send back data
+from schemas.BookSchema import books_schema     # Importing the serialization module
 books = Blueprint("books", __name__, url_prefix="/books") # Creating the blueprint and specifying the url_prefix
 
 
@@ -10,7 +11,7 @@ books = Blueprint("books", __name__, url_prefix="/books") # Creating the bluepri
 def book_index():
     #Return all books
     books = Book.query.all()
-    return jsonify(books)
+    return jsonify(books_schema.dump(books))
     
 
 # @books.route("/", methods=["POST"])

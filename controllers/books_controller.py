@@ -1,4 +1,5 @@
-from database import cursor, connection # Importing the dd config because we need acess to it in this file
+from models.Book import Book                  # This is the module that will communicate with the book table
+from main import db                           # Db connection
 from flask import Blueprint, request, jsonify # We need to be able to create a blueprint and retrieve and send back data
 books = Blueprint("books", __name__, url_prefix="/books") # Creating the blueprint and specifying the url_prefix
 
@@ -8,10 +9,9 @@ books = Blueprint("books", __name__, url_prefix="/books") # Creating the bluepri
 @books.route("/", methods=["GET"])
 def book_index():
     #Return all books
-    sql = "SELECT * FROM books"
-    cursor.execute(sql)
-    books = cursor.fetchall()
+    books = Book.query.all()
     return jsonify(books)
+    
 
 # @books.route("/", methods=["POST"])
 # def book_create():

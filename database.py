@@ -1,14 +1,14 @@
-import psycopg2
-import os
+import psycopg2                 # This is the package to connect to postgres
+import os                       # This is the OS package which is used to retrieve environment variables
 
-connection = psycopg2.connect(
+connection = psycopg2.connect(  # These are the db connection config
     database="library_api",
     user="app",
     password=os.getenv("DB_PASSWORD"),
     host="localhost"
 )
 
-cursor = connection.cursor()
+cursor = connection.cursor()  # Creating the cursor
 
-cursor.execute("create table if not exists books (id serial PRIMARY KEY, title varchar);")
-connection.commit()
+cursor.execute("create table if not exists books (id serial PRIMARY KEY, title varchar);") # Creats the DB table if it doesnt already exist
+connection.commit() # Commits the transaction

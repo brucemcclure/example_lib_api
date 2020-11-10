@@ -1,9 +1,9 @@
 from database import cursor, connection
 from flask import Blueprint, request, jsonify
-books = Blueprint("books", __name__)
+books = Blueprint("books", __name__, url_prefix="/books")
 
 
-@books.route("/books", methods=["GET"])
+@books.route("/", methods=["GET"])
 def book_index():
     #Return all books
     sql = "SELECT * FROM books"
@@ -11,7 +11,7 @@ def book_index():
     books = cursor.fetchall()
     return jsonify(books)
 
-@books.route("/books", methods=["POST"])
+@books.route("/", methods=["POST"])
 def book_create():
     #Create a new book
     sql = "INSERT INTO books (title) VALUES (%s);"
@@ -23,7 +23,7 @@ def book_create():
     book = cursor.fetchone()
     return jsonify(book)
 
-@books.route("/books/<int:id>", methods=["GET"])
+@books.route("/<int:id>", methods=["GET"])
 def book_show(id):
     #Return a single book
     sql = "SELECT * FROM books WHERE id = %s;"
@@ -31,7 +31,7 @@ def book_show(id):
     book = cursor.fetchone()
     return jsonify(book)
 
-@books.route("/books/<int:id>", methods=["PUT", "PATCH"])
+@books.route("/<int:id>", methods=["PUT", "PATCH"])
 def book_update(id):
     #Update a book
     sql = "UPDATE books SET title = %s WHERE id = %s;"
@@ -43,7 +43,7 @@ def book_update(id):
     book = cursor.fetchone()
     return jsonify(book)
 
-@books.route("/books/<int:id>", methods=["DELETE"])
+@books.route("/<int:id>", methods=["DELETE"])
 def book_delete(id):
     sql = "SELECT * FROM books WHERE id = %s;"
     cursor.execute(sql, (id,))

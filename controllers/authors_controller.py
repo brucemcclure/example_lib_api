@@ -5,6 +5,4 @@ authors = Blueprint("authors", __name__, url_prefix="/authors")
 
 @authors.route("/", methods=["GET"])
 def author_index():
-    
-
     return "all authors"

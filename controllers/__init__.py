@@ -5,7 +5,7 @@ from controllers.authors_controller import authors
 
 registerable_controllers = [
     books,
-    authours
+    authors
 ]
 
 

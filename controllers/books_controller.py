@@ -1,7 +1,9 @@
-from database import cursor, connection
-from flask import Blueprint, request, jsonify
-books = Blueprint("books", __name__, url_prefix="/books")
+from database import cursor, connection # Importing the dd config because we need acess to it in this file
+from flask import Blueprint, request, jsonify # We need to be able to create a blueprint and retrieve and send back data
+books = Blueprint("books", __name__, url_prefix="/books") # Creating the blueprint and specifying the url_prefix
 
+
+# These are examples of raw sql crud. They will be replaced with a ORM soon
 
 @books.route("/", methods=["GET"])
 def book_index():

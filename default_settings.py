@@ -5,22 +5,28 @@ class Config(object):
     #connect to postgres+using psycopg2://username:password@localhost:port/name_of_db 
     SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://app:{os.getenv('DB_PASSWORD')}@localhost:5432/library_api"
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # If not needed then this should be disabled because it uses extra memory.
-
+    
+    @property
+    def SQLALCHEMY_DATABASE_URI(self):         # This is a function that will be used for all envs
+        value = os.environ.get("DB_URI")       # Retriieve the db uri from the .env file
+        if not value:
+            raise ValueError("DB_URI is not set")   
+        return value
 
 class DevelopmentConfig(Config): # Inherits from config
-    DEBUG = True
+    DEBUG = True                 # Adds in the debugging mode for development
 
 class ProductionConfig(Config): # Inherits from config
-    pass
+    pass                        # No additional features
 
 class TestingConfig(Config): # Inherits from config
-    TESTING = True
+    TESTING = True           # Adds in the testing env-var
 
 environment = os.environ.get("FLASK_ENV") # Retrieve the the flask env variable
 
-if environment == "production":
-    app_config = ProductionConfig()
-elif environment == "testing":
-    app_config = TestingConfig()
+if environment == "production":        # If the flask env variable is production 
+    app_config = ProductionConfig()    # Then use the production config
+elif environment == "testing":         # If the flask env variable is testing 
+    app_config = TestingConfig()       # Then use the testing config
 else:
-    app_config = DevelopmentConfig()
+    app_config = DevelopmentConfig()   # Else use the development config

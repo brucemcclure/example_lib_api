@@ -13,6 +13,9 @@ db = init_db(app)                                           # Db connection
 from flask_marshmallow import Marshmallow                   # Importing the package 
 ma = Marshmallow(app)                                       # Making a 'ma' object out of the Marshmellow class with app as the argument. 
 
+from commands import db_commands                            # Import the db commands
+app.register_blueprint(db_commands)                         # Register the commands with app
+
 from controllers import registerable_controllers            # Importing the various controllers
 for controller in registerable_controllers:                 # Looping over the registerable_controllers and registering them
     app.register_blueprint(controller)

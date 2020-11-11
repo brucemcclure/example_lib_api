@@ -17,8 +17,8 @@ def create_app():                                               # Flask conventi
 
     app = Flask(__name__)                                       # Creating an app instnace from the flask class
     app.config.from_object("default_settings.app_config")       # Loads our configuration from defatult_settings.py
-
-    db.init_app(app)
+    
+    db.init_app(app)                                            
     ma.init_app(app)
 
     from commands import db_commands                            # Import the db commands

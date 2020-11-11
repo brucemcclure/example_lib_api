@@ -14,23 +14,17 @@ def book_index():
     return jsonify(books_schema.dump(books))   # Return the data in the form of JSON
     
 
+#Create a new book
 @books.route("/", methods=["POST"])
 def book_create():
-    #Create a new book
-    book_fieds = book_schema.load(request.json) # Loading the data that was sent in the post
-
+    book_fieds = book_schema.load(request.json) # Deserializing the json into something that can be used
     new_book = Book()                           # Creating a new instance of book
     new_book.title = book_fieds["title"]        # Update the title
-
-    db.session.add(new_book)                  # Add the book to the session
+    db.session.add(new_book)                    # Add the book to the session
     db.session.commit()                         # Commit the transaction
+    return jsonify(book_schema.dump(new_book))  # Return the json format of the book
 
-    return jsonify(book_schema.dump(new_book))                            # Return the json format of the book
 
-#     sql = "SELECT * FROM books ORDER BY ID DESC LIMIT 1"
-#     cursor.execute(sql)
-#     book = cursor.fetchone()
-#     return jsonify(book)
 
 # @books.route("/<int:id>", methods=["GET"])
 # def book_show(id):

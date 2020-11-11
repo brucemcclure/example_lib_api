@@ -3,6 +3,14 @@ from main import create_app
 
 
 class TestBooks(unittest.TestCase):                 # This is the Parent class that will test our books module. 
+    @classmethod
+    def setUp(cls):
+        print("setup ran")
+    
+    @classmethod
+    def tearDown(cls):
+        print("teardown ran")
+
     def test_book_index(self):
         app = create_app()                          # This is an instance of app
         client = app.test_client()                  # This helps us make http requests to the app while we are testing

@@ -36,22 +36,16 @@ def book_show(id):                              # Define the show function, , ta
 # Update a book
 @books.route("/<int:id>", methods=["PUT", "PATCH"])     # Define the route and method
 def book_update(id):                                    # Define the update function, takes the id as an argument
-    books = Book.query.filter_by(id=id)                    # Using the Book model to fetch one book with a specific id using the query method
+    books = Book.query.filter_by(id=id)                 # Using the Book model to fetch one book with a specific id using the query method
     book_fields = book_schema.load(request.json)        # Deserializing the json into something that can be used
     books.update(book_fields)                           # Update books with the new data
     db.session.commit()                                 # Commit the transaction to the DB
     return jsonify(book_schema.dump(books[0]))          # Return the data
 
 # Delete a book
-# @books.route("/<int:id>", methods=["DELETE"])      # Define the route and method
-# def book_delete(id):                               # Define the update function, takes the id as an argument
-#     sql = "SELECT * FROM books WHERE id = %s;"
-#     cursor.execute(sql, (id,))
-#     book = cursor.fetchone()
-    
-#     if book:
-#         sql = "DELETE FROM books WHERE id = %s;"
-#         cursor.execute(sql, (id,))
-#         connection.commit()
-
-#     return jsonify(book)
+@books.route("/<int:id>", methods=["DELETE"])      # Define the route and method
+def book_delete(id):                               # Define the update function, takes the id as an argument
+    book = Book.query.get(id)                      # Get a reference to the specific book using the Book model and the query method
+    db.session.delete(book)                        # Delete the book
+    db.session.commit()                            # Commit the transaction to the database
+    return jsonify(book_schema.dump(book))         # Return the data in the form of json

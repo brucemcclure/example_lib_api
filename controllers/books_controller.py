@@ -15,8 +15,8 @@ def book_index():
     
 
 #Create a new book
-@books.route("/", methods=["POST"])
-def book_create():
+@books.route("/", methods=["POST"])             # Define the route and method
+def book_create():                              # Define the create function
     book_fieds = book_schema.load(request.json) # Deserializing the json into something that can be used
     new_book = Book()                           # Creating a new instance of book
     new_book.title = book_fieds["title"]        # Update the title
@@ -26,17 +26,16 @@ def book_create():
 
 
 
-# @books.route("/<int:id>", methods=["GET"])
-# def book_show(id):
-#     #Return a single book
-#     sql = "SELECT * FROM books WHERE id = %s;"
-#     cursor.execute(sql, (id,))
-#     book = cursor.fetchone()
-#     return jsonify(book)
+# Return a single book
+@books.route("/<int:id>", methods=["GET"])      # Define the route and method
+def book_show(id):                              # Define the show function, , takes the id as an argument
+    book = Book.query.get(id)                   # Using the Book model to fetch one book with a specific id using the query method
+    return jsonify(book_schema.dump(book))      # Return the book in the form of JSON
 
-# @books.route("/<int:id>", methods=["PUT", "PATCH"])
-# def book_update(id):
-#     #Update a book
+
+# Update a book
+@books.route("/<int:id>", methods=["PUT", "PATCH"])     # Define the route and method
+def book_update(id):                                    # Define the update function, takes the id as an argument
 #     sql = "UPDATE books SET title = %s WHERE id = %s;"
 #     cursor.execute(sql, (request.json["title"], id))
 #     connection.commit()
@@ -46,8 +45,9 @@ def book_create():
 #     book = cursor.fetchone()
 #     return jsonify(book)
 
-# @books.route("/<int:id>", methods=["DELETE"])
-# def book_delete(id):
+# Delete a book
+@books.route("/<int:id>", methods=["DELETE"])      # Define the route and method
+def book_delete(id):                               # Define the update function, takes the id as an argument
 #     sql = "SELECT * FROM books WHERE id = %s;"
 #     cursor.execute(sql, (id,))
 #     book = cursor.fetchone()

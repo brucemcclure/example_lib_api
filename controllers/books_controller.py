@@ -36,18 +36,15 @@ def book_show(id):                              # Define the show function, , ta
 # Update a book
 @books.route("/<int:id>", methods=["PUT", "PATCH"])     # Define the route and method
 def book_update(id):                                    # Define the update function, takes the id as an argument
-#     sql = "UPDATE books SET title = %s WHERE id = %s;"
-#     cursor.execute(sql, (request.json["title"], id))
-#     connection.commit()
-
-#     sql = "SELECT * FROM books WHERE id = %s"
-#     cursor.execute(sql, (id,))
-#     book = cursor.fetchone()
-#     return jsonify(book)
+    books = Book.query.filter_by(id=id)                    # Using the Book model to fetch one book with a specific id using the query method
+    book_fields = book_schema.load(request.json)        # Deserializing the json into something that can be used
+    books.update(book_fields)                           # Update books with the new data
+    db.session.commit()                                 # Commit the transaction to the DB
+    return jsonify(book_schema.dump(books[0]))          # Return the data
 
 # Delete a book
-@books.route("/<int:id>", methods=["DELETE"])      # Define the route and method
-def book_delete(id):                               # Define the update function, takes the id as an argument
+# @books.route("/<int:id>", methods=["DELETE"])      # Define the route and method
+# def book_delete(id):                               # Define the update function, takes the id as an argument
 #     sql = "SELECT * FROM books WHERE id = %s;"
 #     cursor.execute(sql, (id,))
 #     book = cursor.fetchone()

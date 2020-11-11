@@ -6,6 +6,7 @@ from models.Book import Book # Importing the model that handles the book databas
 class BookSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Book
+    title = ma.String(required=True)        # This is declaring a required data type on the title column
 
-book_schema = BookSchema() # How you serilaize and deserialize one object.
-books_schema = BookSchema(many = True) # How you serilaize and deserialize many objects.
+book_schema = BookSchema()                  # How you serilaize and deserialize one object.
+books_schema = BookSchema(many = True)      # How you serilaize and deserialize many objects.

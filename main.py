@@ -1,10 +1,11 @@
 from dotenv import load_dotenv                              # This is the package used to set env varibles
 load_dotenv()                                               # Load the env variables
 
-from flask import Flask                                     # Importing the flask class
+from marshmallow.exceptions import ValidationError
+
+from flask import Flask, jsonify                            # Importing the flask class
 app = Flask(__name__)                                       # Creating an app instnace from the flask class
 app.config.from_object("default_settings.app_config")       # Loads our configuration from defatult_settings.py
-
 
 from database import init_db
 db = init_db(app)                                           # Db connection
@@ -21,3 +22,6 @@ for controller in registerable_controllers:                 # Looping over the r
     app.register_blueprint(controller)
 
 
+@app.errorhandler(ValidationError)                          # Decorator for the ValidationError
+def handle_bad_request(error):                              # The handle bad request function inherits from the python error object
+    return (jsonify(error.messages), 400)                   # Return the  error message in jason with a status of 400

@@ -1,9 +1,10 @@
-from models.Book import Book                              # This is the module that will communicate with the book table
-from main import db                                       # Db connection
-from flask import Blueprint, request, jsonify             # We need to be able to create a blueprint and retrieve and send back data
-from schemas.BookSchema import books_schema, book_schema  # Importing the serialization module
-from flask_jwt_extended import jwt_required               # This function will check if we have a JWT sent along with our request or not
-books = Blueprint("books", __name__, url_prefix="/books") # Creating the blueprint and specifying the url_prefix
+from models.Book import Book                                  # This is the module that will communicate with the book table
+from models.User import User                                  # This is the module that will communicate with the user table
+from main import db                                           # Db connection
+from flask import Blueprint, request, jsonify, abort          # We need to be able to create a blueprint and retrieve and send back data
+from schemas.BookSchema import books_schema, book_schema      # Importing the serialization module
+from flask_jwt_extended import jwt_required, get_jwt_identity # This function will check if we have a JWT sent along with our request or not
+books = Blueprint("books", __name__, url_prefix="/books")     # Creating the blueprint and specifying the url_prefix
 
 
 # These are examples of raw sql crud. They will be replaced with a ORM soon
@@ -16,13 +17,20 @@ def book_index():
     
 
 #Create a new book
-@books.route("/", methods=["POST"])             # Define the route and method
+@books.route("/", methods=["POST"])                 # Define the route and method
 @jwt_required
-def book_create():                              # Define the create function
-    book_fieds = book_schema.load(request.json) # Deserializing the json into something that can be used
+def book_create():                                  # Define the create function
+
+    book_fieds = book_schema.load(request.json)     # Deserializing the json into something that can be used
+    user_id = get_jwt_identity()                    # Get identity returns the userid from the JWT
+    user = User.query.get(user_id)                  # Return the user from querying the DB with the DB
+    if not user:                                    # If no user then return the id
+        return abort(401, description="Invalid user")
+
     new_book = Book()                           # Creating a new instance of book
     new_book.title = book_fieds["title"]        # Update the title
-    db.session.add(new_book)                    # Add the book to the session
+
+    user.books.append(new_book)                 # Add this book to the the user who created it
     db.session.commit()                         # Commit the transaction
     return jsonify(book_schema.dump(new_book))  # Return the json format of the book
 

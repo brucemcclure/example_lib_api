@@ -17,13 +17,29 @@ def drop_db():                              # Declaration of the function
 @db_commands.cli.command("seed")           # The seed command
 def seed_db():
     from models.Book import Book           # Import the book model
+    from models.User import User           # User model
+    from main import bcrypt                # Hashing module
     from faker import Faker                # Import the faker module 
-    faker = Faker()                        # Create an instance of faker
-
-    for i in range(20):                    # 20
-        book = Book()                      # New instance of book
-        book.title = faker.catch_phrase()  # Add a title
-        db.session.add(book)               # add the book to the db session
+    import random
     
-    db.session.commit()                    # Commit all the books to the db
+    faker = Faker()                        # Create an instance of faker
+    users = []                             # Initializing an empty list
+
+    # Creating 5 users and appending them to the users list
+    for i in range(5):
+        user = User()
+        user.email = f"test{i}@test.com"
+        user.password = bcrypt.generate_password_hash("123456").decode("utf-8")
+        db.session.add(user)
+        users.append(user)
+
+    db.session.commit()
+
+    for i in range(20):                        # 20
+        book = Book()                          # New instance of book
+        book.title = faker.catch_phrase()      # Add a title
+        book.user_id = random.choice(users).id # Choosing a random user to assign the book to
+        db.session.add(book)                   # add the book to the db session
+    
+    db.session.commit()                        # Commit all the books to the db
     print("Tables seeded")

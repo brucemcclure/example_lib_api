@@ -5,6 +5,7 @@ from marshmallow.validate import Length                             # Import the
 class UserSchema(ma.SQLAlchemyAutoSchema):                          # Inherits from the AutoSchema so it gets csome configuration from the Model
     class Meta:
         model = User
+        load_only = ["password"]                                    # This line ensures the hash is never nent back to the user
     
     email = ma.String(required=True, validate=Length(min=4))        # The email is required and must be at least 4 chars long
     password = ma.String(required=True, validate=Length(min=6))     # The password is required and must be at least 6 chars long because cyber security

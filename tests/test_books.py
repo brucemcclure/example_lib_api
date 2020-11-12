@@ -34,7 +34,7 @@ class TestBooks(unittest.TestCase):                 # This is the Parent class t
         cls.app_context.pop()                       # Remove the context of the app
 
     def test_book_index(self):
-        response = self.client.get("/books/")            # make a get request to the app the "/books/" url, save it to a response object
+        response = self.client.get("/books/")       # make a get request to the app the "/books/" url, save it to a response object
 
         data = response.get_json()                  # jsonify the data
 

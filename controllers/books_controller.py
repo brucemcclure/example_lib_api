@@ -70,7 +70,17 @@ def book_update(id):                                    # Define the update func
 @books.route("/<int:id>", methods=["DELETE"])      # Define the route and method
 @jwt_required
 def book_delete(id):                               # Define the update function, takes the id as an argument
-    book = Book.query.get(id)                      # Get a reference to the specific book using the Book model and the query method
+    user_id = get_jwt_identity()                   # Get the user ID from the jwt
+    user = User.query.get(user_id)                 # Get the user object from the db by querying the db with the id
+    
+    if not user:                                   # Check if that user exisits
+        return abort(401, description="Invalid user")
+
+    book = Book.query.filter_by(id=id, user_id=user.id).first() # Check if the user owns that book
+
+    if not book:                                    # If no book exisits then 
+        return abort(400)
+
     db.session.delete(book)                        # Delete the book
     db.session.commit()                            # Commit the transaction to the database
     return jsonify(book_schema.dump(book))         # Return the data in the form of json

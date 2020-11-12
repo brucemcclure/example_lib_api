@@ -38,7 +38,7 @@ class TestBooks(unittest.TestCase):                 # This is the Parent class t
 
         data = response.get_json()                  # jsonify the data
 
-        self.assertEqual(response.status_code, 200) # Checking if the response code is 200
+        self.assertEqual(response.status_code, 200) # Checking if the response code is 200 you can make it a range 200-299 too
         self.assertIsInstance(data, list)           # Checking the data type of the response code
 
     def test_book_create(self):
@@ -48,7 +48,7 @@ class TestBooks(unittest.TestCase):                 # This is the Parent class t
 
         data = response.get_json()
 
-        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.status_code,200) 
         self.assertTrue(bool("id" in data.keys()))
         book = Book.query.get(data["id"])
         self.assertIsNotNone(book)

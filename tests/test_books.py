@@ -5,11 +5,17 @@ from main import create_app
 class TestBooks(unittest.TestCase):                 # This is the Parent class that will test our books module. 
     @classmethod
     def setUp(cls):
-        print("setup ran")
+        cls.app = create_app()
+        cls.app_context = cls.app.app_context()
+        cls.app_context.push()
+        cls.client = cls.app.test_client()
+        db.create_all()
     
     @classmethod
     def tearDown(cls):
-        print("teardown ran")
+        db.session.remove()
+        db.drop_all()
+        cls.app_context.pop()
 
     def test_book_index(self):
         app = create_app()                          # This is an instance of app

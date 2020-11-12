@@ -2,6 +2,8 @@ from models.User import User                               # User model
 from schemas.UserSchema import user_schema                 # User Schema
 from main import db                                        # Importing the db
 from main import bcrypt                                    # Importing bcrypt
+from flask_jwt_extended import create_access_token         # JWT management lib
+from datetime import timedelta                             # time delta function from the date - time standard library
 from flask import Blueprint, request, jsonify, abort       # Importing the Blueprint class from flask  
 
 auth = Blueprint('auth', __name__, url_prefix="/auth")     # Creating the auth blueprint into a varaibale called auth
@@ -32,7 +34,9 @@ def auth_login():
 
     user = User.query.filter_by(email=user_fields["email"]).first()   # Check if the user is registered with the app at all
 
+    expiry = timedelta(days=1)
+    access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
     if not user or not bcrypt.check_password_hash(user.password, user_fields["password"]): # If the user is not registered, or the password is incorrect then raise this error.
         return abort(401, description="Incorrect username and password")
     
-    return "token"
+    return jsonify({ "token": access_token })

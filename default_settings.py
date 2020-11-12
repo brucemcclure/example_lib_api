@@ -4,6 +4,7 @@ import os  # This is the OS package which is used to retrieve environment variab
 class Config(object):                                   
     #connect to postgres+using psycopg2://username:password@localhost:port/name_of_db 
     SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://app:{os.getenv('DB_PASSWORD')}@localhost:5432/library_api"
+    JWT_SECRET_KEY = "Mr quackers"
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # If not needed then this should be disabled because it uses extra memory.
     
     @property
@@ -17,7 +18,13 @@ class DevelopmentConfig(Config): # Inherits from config
     DEBUG = True                 # Adds in the debugging mode for development
 
 class ProductionConfig(Config): # Inherits from config
-    pass                        # No additional features
+    @property
+    def JWT_SECRET_KEY(self):
+        value = os.environ.get("JWT_SECRET_KEY")
+        if not value:
+            raise ValueError("JWT Secret Key is not set")
+        
+        return value
 
 class TestingConfig(Config): # Inherits from config
     TESTING = True           # Adds in the testing env-var

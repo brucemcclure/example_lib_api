@@ -1,6 +1,7 @@
 from models.User import User                               # User model
 from schemas.UserSchema import user_schema                 # User Schema
 from main import db                                        # Importing the db
+from main import bcrypt                                    # Importing bcrypt
 from flask import Blueprint, request, jsonify, abort       # Importing the Blueprint class from flask  
 
 auth = Blueprint('auth', __name__, url_prefix="/auth")     # Creating the auth blueprint into a varaibale called auth
@@ -15,7 +16,8 @@ def auth_register():
 
     user = User()                                                      # Create a new user object
     user.email = user_fields["email"]                                  # Assign the email to the user
-    user.password = user_fields["password"]                            # Assign the password to the user
+                                                                       # Assign the password to the user
+    user.password = bcrypt.generate_password_hash(user_fields["password"]).decode("utf-8")  
 
     db.session.add(user)                                               # Add the commited user to the session   
     db.session.commit()                                                # Commit the session to the database

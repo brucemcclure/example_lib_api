@@ -2,9 +2,11 @@ from flask import Flask, jsonify                            # Importing the flas
 from marshmallow.exceptions import ValidationError
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_bcrypt import Bcrypt
 
-db = SQLAlchemy()
-ma = Marshmallow()
+db = SQLAlchemy()                                               # Make a new instance of the SQL ALchemy
+ma = Marshmallow()                                              # Make a new instance of the MArshmallow
+bcrypt = Bcrypt()                                               # Make a new instance of Bcrypt
 
 
 # The factory pattern is where you create an object without exposing its creation logic. 
@@ -24,6 +26,7 @@ def create_app():                                               # Flask conventi
     # Therefore they need to be in the create_app function. 
     db.init_app(app)                                            
     ma.init_app(app)
+    bcrypt.init_app(app)
 
     from commands import db_commands                            # Import the db commands
     app.register_blueprint(db_commands)                         # Register the commands with app

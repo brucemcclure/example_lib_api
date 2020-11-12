@@ -34,9 +34,9 @@ def auth_login():
 
     user = User.query.filter_by(email=user_fields["email"]).first()   # Check if the user is registered with the app at all
 
-    expiry = timedelta(days=1)
-    access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
+    expiry = timedelta(days=1)                                        # The jwt will expire in 1 day
+    access_token = create_access_token(identity=str(user.id), expires_delta=expiry)        # Creating the JWT
     if not user or not bcrypt.check_password_hash(user.password, user_fields["password"]): # If the user is not registered, or the password is incorrect then raise this error.
         return abort(401, description="Incorrect username and password")
     
-    return jsonify({ "token": access_token })
+    return jsonify({ "token": access_token })                         # Return the JWT

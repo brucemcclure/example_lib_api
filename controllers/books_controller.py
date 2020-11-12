@@ -47,8 +47,21 @@ def book_show(id):                              # Define the show function, , ta
 @books.route("/<int:id>", methods=["PUT", "PATCH"])     # Define the route and method
 @jwt_required
 def book_update(id):                                    # Define the update function, takes the id as an argument
-    books = Book.query.filter_by(id=id)                 # Using the Book model to fetch one book with a specific id using the query method
+    # books = Book.query.filter_by(id=id)                 # Using the Book model to fetch one book with a specific id using the query method
     book_fields = book_schema.load(request.json)        # Deserializing the json into something that can be used
+    user_id = get_jwt_identity()                        # Get the user  id from the jwt
+
+    user = User.query.get(user_id)                      # Get the user by querying the DB by user ID
+
+    if not user:                                        # Check if that user exisits
+        return abort(401, description="Invalid user")
+
+    books = Book.query.filter_by(id=id, user_id=user.id) # Check if the user owns that book
+
+    if books.count() != 1:                              # Raise error if the user is not authorized
+        return abort(401, description="Unauthorized to update this book")
+
+
     books.update(book_fields)                           # Update books with the new data
     db.session.commit()                                 # Commit the transaction to the DB
     return jsonify(book_schema.dump(books[0]))          # Return the data

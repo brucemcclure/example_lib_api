@@ -11,7 +11,7 @@ class BookSchema(ma.SQLAlchemyAutoSchema):
         model = Book
 
     title = ma.String(required=True, validate=Length(min=1))        # This is declaring a required data type on the title column
-    user = ma.Nested(UserSchema)                                    # Each book must have a user
+    user = ma.Nested(UserSchema)                                    # 'Attaches' the user tot he book. So when we look up the book it shows the authors data too
 
 book_schema = BookSchema()                  # How you serilaize and deserialize one object.
 books_schema = BookSchema(many = True)      # How you serilaize and deserialize many objects.

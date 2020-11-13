@@ -27,44 +27,44 @@ def book_create():                                  # Define the create function
     if not user:                                    # If no user then return the id
         return abort(401, description="Invalid user")
 
-    new_book = Book()                           # Creating a new instance of book
-    new_book.title = book_fieds["title"]        # Update the title
+    new_book = Book()                               # Creating a new instance of book
+    new_book.title = book_fieds["title"]            # Update the title
 
-    user.books.append(new_book)                 # Add this book to the the user who created it
-    db.session.commit()                         # Commit the transaction
-    return jsonify(book_schema.dump(new_book))  # Return the json format of the book
+    user.books.append(new_book)                     # Add this book to the the user who created it
+    db.session.commit()                             # Commit the transaction
+    return jsonify(book_schema.dump(new_book))      # Return the json format of the book
 
 
 
 # Return a single book
-@books.route("/<int:id>", methods=["GET"])      # Define the route and method
-def book_show(id):                              # Define the show function, , takes the id as an argument
-    book = Book.query.get(id)                   # Using the Book model to fetch one book with a specific id using the query method
-    return jsonify(book_schema.dump(book))      # Return the book in the form of JSON
+@books.route("/<int:id>", methods=["GET"])          # Define the route and method
+def book_show(id):                                  # Define the show function, , takes the id as an argument
+    book = Book.query.get(id)                       # Using the Book model to fetch one book with a specific id using the query method
+    return jsonify(book_schema.dump(book))          # Return the book in the form of JSON
 
 
 # Update a book
-@books.route("/<int:id>", methods=["PUT", "PATCH"])     # Define the route and method
+@books.route("/<int:id>", methods=["PUT", "PATCH"]) # Define the route and method
 @jwt_required
-def book_update(id):                                    # Define the update function, takes the id as an argument
-    # books = Book.query.filter_by(id=id)                 # Using the Book model to fetch one book with a specific id using the query method
-    book_fields = book_schema.load(request.json)        # Deserializing the json into something that can be used
-    user_id = get_jwt_identity()                        # Get the user  id from the jwt
+def book_update(id):                                # Define the update function, takes the id as an argument
+    # books = Book.query.filter_by(id=id)           # Using the Book model to fetch one book with a specific id using the query method
+    book_fields = book_schema.load(request.json)    # Deserializing the json into something that can be used
+    user_id = get_jwt_identity()                    # Get the user  id from the jwt
 
-    user = User.query.get(user_id)                      # Get the user by querying the DB by user ID
+    user = User.query.get(user_id)                  # Get the user by querying the DB by user ID
 
-    if not user:                                        # Check if that user exisits
+    if not user:                                    # Check if that user exisits
         return abort(401, description="Invalid user")
 
     books = Book.query.filter_by(id=id, user_id=user.id) # Check if the user owns that book
 
-    if books.count() != 1:                              # Raise error if the user is not authorized
+    if books.count() != 1:                               # Raise error if the user is not authorized
         return abort(401, description="Unauthorized to update this book")
 
 
-    books.update(book_fields)                           # Update books with the new data
-    db.session.commit()                                 # Commit the transaction to the DB
-    return jsonify(book_schema.dump(books[0]))          # Return the data
+    books.update(book_fields)                      # Update books with the new data
+    db.session.commit()                            # Commit the transaction to the DB
+    return jsonify(book_schema.dump(books[0]))     # Return the data
 
 # Delete a book
 @books.route("/<int:id>", methods=["DELETE"])      # Define the route and method

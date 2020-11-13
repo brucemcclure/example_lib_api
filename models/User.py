@@ -8,5 +8,7 @@ class User(db.Model):                                               # This is th
     password = db.Column(db.String(), nullable=False)               # The password is a string and cannot be null
     books = db.relationship("Book", backref="user", lazy="dynamic") # Relating back to the book table
 
-    def __repr__(self):                                             # 
-        return f"<User {self.email}>"                               #
+    def __repr__(self):                                             # Reresentitive state
+        return f"<User {self.email}>"                               # When the User is printed it now shows the email instead of the id
+
+

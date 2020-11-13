@@ -4,6 +4,9 @@ from main import db                                           # Db connection
 from flask import Blueprint, request, jsonify, abort          # We need to be able to create a blueprint and retrieve and send back data
 from schemas.BookSchema import books_schema, book_schema      # Importing the serialization module
 from flask_jwt_extended import jwt_required, get_jwt_identity # This function will check if we have a JWT sent along with our request or not
+from services.auth_service import verify_user
+from sqlalchemy.orm import joinedload
+
 books = Blueprint("books", __name__, url_prefix="/books")     # Creating the blueprint and specifying the url_prefix
 
 
@@ -12,20 +15,21 @@ books = Blueprint("books", __name__, url_prefix="/books")     # Creating the blu
 #Return all books
 @books.route("/", methods=["GET"])
 def book_index():
-    books = Book.query.all()                   # Using the Book model to fetch all the books with the query method
-    return jsonify(books_schema.dump(books))   # Return the data in the form of JSON
+    books = Book.query.options(joinedload("user")).all()    # Using the Book model to fetch all the books with the query method
+    return jsonify(books_schema.dump(books))                # Return the data in the form of JSON
     
 
 #Create a new book
 @books.route("/", methods=["POST"])                 # Define the route and method
 @jwt_required
-def book_create():                                  # Define the create function
+@verify_user
+def book_create(user=None):                         # Define the create function. user=none to use the decorator
 
     book_fieds = book_schema.load(request.json)     # Deserializing the json into something that can be used
-    user_id = get_jwt_identity()                    # Get identity returns the userid from the JWT
-    user = User.query.get(user_id)                  # Return the user from querying the DB with the DB
-    if not user:                                    # If no user then return the id
-        return abort(401, description="Invalid user")
+    # user_id = get_jwt_identity()                    # Get identity returns the userid from the JWT
+    # user = User.query.get(user_id)                  # Return the user from querying the DB with the DB
+    # if not user:                                    # If no user then return the id
+    #     return abort(401, description="Invalid user")
 
     new_book = Book()                               # Creating a new instance of book
     new_book.title = book_fieds["title"]            # Update the title
@@ -46,15 +50,16 @@ def book_show(id):                                  # Define the show function, 
 # Update a book
 @books.route("/<int:id>", methods=["PUT", "PATCH"]) # Define the route and method
 @jwt_required
-def book_update(id):                                # Define the update function, takes the id as an argument
+@verify_user
+def book_update(id, user=None):                     # Define the update function, takes the id as an argument. user=none to use the decorator
     # books = Book.query.filter_by(id=id)           # Using the Book model to fetch one book with a specific id using the query method
     book_fields = book_schema.load(request.json)    # Deserializing the json into something that can be used
-    user_id = get_jwt_identity()                    # Get the user  id from the jwt
+    # user_id = get_jwt_identity()                    # Get the user  id from the jwt
 
-    user = User.query.get(user_id)                  # Get the user by querying the DB by user ID
+    # user = User.query.get(user_id)                  # Get the user by querying the DB by user ID
 
-    if not user:                                    # Check if that user exisits
-        return abort(401, description="Invalid user")
+    # if not user:                                    # Check if that user exisits
+    #     return abort(401, description="Invalid user")
 
     books = Book.query.filter_by(id=id, user_id=user.id) # Check if the user owns that book
 
@@ -69,12 +74,13 @@ def book_update(id):                                # Define the update function
 # Delete a book
 @books.route("/<int:id>", methods=["DELETE"])      # Define the route and method
 @jwt_required
-def book_delete(id):                               # Define the update function, takes the id as an argument
-    user_id = get_jwt_identity()                   # Get the user ID from the jwt
-    user = User.query.get(user_id)                 # Get the user object from the db by querying the db with the id
+@verify_user
+def book_delete(id, user=None):                    # Define the update function, takes the id as an argument. user=none to use the decorator
+    # user_id = get_jwt_identity()                   # Get the user ID from the jwt
+    # user = User.query.get(user_id)                 # Get the user object from the db by querying the db with the id
     
-    if not user:                                   # Check if that user exisits
-        return abort(401, description="Invalid user")
+    # if not user:                                   # Check if that user exisits
+    #     return abort(401, description="Invalid user")
 
     book = Book.query.filter_by(id=id, user_id=user.id).first() # Check if the user owns that book
 

@@ -1,16 +1,17 @@
 from main import db                         # DB connection
 from flask import Blueprint                 # Using a flask Blueprint because passing the app around is bad practice
 
-db_commands = Blueprint("db", __name__)     # Creating the blueprint
+db_commands = Blueprint("db-custom", __name__)     # Creating the blueprint
 
 @db_commands.cli.command("create")          # The 'create' command 
 def create_db():                            # Declaration of the function
     db.create_all()                         
     print("Tables created!")
 
-@db_commands.cli.command("drop")            # The 'create' command 
-def drop_db():                              # Declaration of the function
+@db_commands.cli.command("drop")
+def drop_db():
     db.drop_all()
+    db.engine.execute("DROP TABLE IF EXISTS alembic_version;")
     print("Tables deleted")
 
 

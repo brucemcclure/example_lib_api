@@ -4,11 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager                       # import the jwt manager 
+from flask_migrate import Migrate                               # Packages for migrations
 
 db = SQLAlchemy()                                               # Make a new instance of the SQL ALchemy
 ma = Marshmallow()                                              # Make a new instance of the MArshmallow
 bcrypt = Bcrypt()                                               # Make a new instance of Bcrypt
 jwt = JWTManager()                                              # Make a new instance of the JWT manager
+migrate = Migrate()                                             # Make a new instance of the migrate
 
 
 # The factory pattern is where you create an object without exposing its creation logic. 
@@ -30,6 +32,7 @@ def create_app():                                               # Flask conventi
     ma.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    migrate.init_app(app, db)
 
     from commands import db_commands                            # Import the db commands
     app.register_blueprint(db_commands)                         # Register the commands with app
@@ -42,5 +45,10 @@ def create_app():                                               # Flask conventi
     @app.errorhandler(ValidationError)                          # Decorator for the ValidationError
     def handle_bad_request(error):                              # The handle bad request function inherits from the python error object
         return (jsonify(error.messages), 400)                   # Return the  error message in jason with a status of 400
-
+        
+    @app.errorhandler(500)
+    def handle_500(error):
+        app.logger.error(error)
+        return ("bad stuff", 500)
+    
     return app

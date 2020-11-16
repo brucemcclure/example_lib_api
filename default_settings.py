@@ -25,10 +25,10 @@ class Config(object):
         return value
 
     @property
-    def AWS_SECRET_ACCESS_KEY_ID(self):                     # This is a function that will be used for all envs
-        value = os.environ.get("AWS_SECRET_ACCESS_KEY_ID")  # Retriieve the db uri from the .env file
+    def AWS_SECRET_ACCESS_KEY(self):                     # This is a function that will be used for all envs
+        value = os.environ.get("AWS_SECRET_ACCESS_KEY")  # Retriieve the db uri from the .env file
         if not value:
-            raise ValueError("AWS_SECRET_ACCESS_KEY_ID is not set")
+            raise ValueError("AWS_SECRET_ACCESS_KEY is not set")
         return value
 
     @property

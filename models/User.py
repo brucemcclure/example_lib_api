@@ -10,5 +10,3 @@ class User(db.Model):                                               # This is th
 
     def __repr__(self):                                             # Reresentitive state
         return f"<User {self.email}>"                               # When the User is printed it now shows the email instead of the id
-
-

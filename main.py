@@ -3,7 +3,7 @@ from marshmallow.exceptions import ValidationError
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager                       # import the jwt manager 
+from flask_jwt_extended import JWTManager                       # import the jwt manager
 from flask_migrate import Migrate                               # Packages for migrations
 
 db = SQLAlchemy()                                               # Make a new instance of the SQL ALchemy
@@ -13,7 +13,7 @@ jwt = JWTManager()                                              # Make a new ins
 migrate = Migrate()                                             # Make a new instance of the migrate
 
 
-# The factory pattern is where you create an object without exposing its creation logic. 
+# The factory pattern is where you create an object without exposing its creation logic.
 # Basically the factory pattern uses a function to instantiate a new object and then returns that object from the function.
 
 # Flask run, by default looks into main.py and runs creat_app automatically
@@ -22,13 +22,12 @@ def create_app():                                               # Flask conventi
     from dotenv import load_dotenv                              # This is the package used to set env varibles
     load_dotenv()                                               # Load the env variables
 
-
     app = Flask(__name__)                                       # Creating an app instnace from the flask class
     app.config.from_object("default_settings.app_config")       # Loads our configuration from defatult_settings.py
 
-    #  These need the context of which 'app' it is currently using. 
-    # Therefore they need to be in the create_app function. 
-    db.init_app(app)                                            
+    #  These need the context of which 'app' it is currently using.
+    # Therefore they need to be in the create_app function.
+    db.init_app(app)
     ma.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
@@ -41,14 +40,13 @@ def create_app():                                               # Flask conventi
     for controller in registerable_controllers:                 # Looping over the registerable_controllers and registering them
         app.register_blueprint(controller)
 
-
     @app.errorhandler(ValidationError)                          # Decorator for the ValidationError
     def handle_bad_request(error):                              # The handle bad request function inherits from the python error object
         return (jsonify(error.messages), 400)                   # Return the  error message in jason with a status of 400
-        
+
     @app.errorhandler(500)
     def handle_500(error):
         app.logger.error(error)
         return ("bad stuff", 500)
-    
+
     return app

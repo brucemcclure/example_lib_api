@@ -72,17 +72,17 @@ def book_image_show(book_id, id):
 @jwt_required
 @verify_user
 def book_image_delete(book_id, id, user=None):
-    book = Book.query.filter_by(id=book_id, user_id=user.id).first()
+    book = Book.query.filter_by(id=book_id, user_id=user.id).first()                # Getting the book form the db
 
-    if not book:
+    if not book:                                                                    # Checking if valid book
         return abort(401, description="Invalid book")
     if book.book_image:
-        bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
+        bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])   # Connecting to the bucket
         filename = book.book_image.filename
 
-        bucket.Object(f"book_images/{filename}").delete()
+        bucket.Object(f"book_images/{filename}").delete()                           # Deleting the image from S3
 
-        db.session.delete(book.book_image)
+        db.session.delete(book.book_image)                                          # Deleting the image form the db
         db.session.commit()
 
     return jsonify("", 204)

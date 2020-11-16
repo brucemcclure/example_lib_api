@@ -19,24 +19,24 @@ book_images = Blueprint("book_images", __name__, url_prefix="/books/<int:book_id
 def book_image_create(book_id, user=None):
     book = Book.query.filter_by(id=book_id, user_id=user.id).first()            # Check if the book exisits and the user owns that book
 
-    if not book:
+    if not book:                                                                # Check if the book exists
         return abort(401, description="Invalid book")
 
-    if "image" not in request.files:
+    if "image" not in request.files:                                            # Check if there is an image on the post request
         return abort(400, description="No Image")
 
-    image = request.files["image"]
+    image = request.files["image"]                                              # Assign the image to the variable
 
-    if Path(image.filename).suffix not in [".png", ".jpeg", ".jpg", ".gif"]:
+    if Path(image.filename).suffix not in [".png", ".jpeg", ".jpg", ".gif"]:    # Check if the correct file suffix is on the file
         return abort(400, description="Invalid file type")
 
-    filename = f"{book_id}{Path(image.filename).suffix}"
-    bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
-    key = f"book_images/{filename}"
+    filename = f"{book_id}{Path(image.filename).suffix}"                        # Create the file name
+    bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])   # Connect to the bucket
+    key = f"book_images/{filename}"                                             # File path
 
-    bucket.upload_fileobj(image, key)
+    bucket.upload_fileobj(image, key)                                           # Uplaod the image
 
-    if not book.book_image:
+    if not book.book_image:                                                     # If there is no book image then create one and commit to the db
         new_image = BookImage()
         new_image.filename = filename
         book.book_image = new_image

@@ -17,3 +17,7 @@ flask db-custom seed
 flask db migrate -m "message about migration"
 flask db upgrade # Runs the migration
 flask db downgrade # Reverses the migration
+
+### NB
+
+On a fresh clone run flask DB upgrade

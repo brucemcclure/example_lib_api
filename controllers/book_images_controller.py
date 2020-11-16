@@ -72,4 +72,7 @@ def book_image_show(book_id, id):
 @jwt_required
 @verify_user
 def book_image_delete(book_id, id, user=None):
-    return "3"
+    book_image = BookImage.query.filter_by(id=id).first()                       # Grab the book  from the database
+
+    if not book_image:                                                          # Make usre the book exists
+        return abort(401, description="Invalid book")

@@ -45,23 +45,26 @@ def book_image_create(book_id, user=None):
     return ("", 201)
 
 
+# Because the bucket is not accessable to the public:
+# We will download the image and pipe it directly inot the api respose.
+
 @book_images.route("/<int:id>", methods=["GET"])
-def book_image_show(book_id, id, user=None):
-    book_image = BookImage.query.filter_by(id=id).first()                       # Grab the book from the database
+def book_image_show(book_id, id):
+    book_image = BookImage.query.filter_by(id=id).first()                       # Grab the book  from the database
 
     if not book_image:                                                          # Make usre the book exists
         return abort(401, description="Invalid book")
 
     bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])  # Assign the S3
     filename = book_image.filename
-    file_obj = bucket.Object(f"book_images/{filename}").get()
+    file_obj = bucket.Object(f"book_images/{filename}").get()                   # This gets the actual file form S3. This is a Stream
 
-    print(file_obj)
+    print(file_obj)                                                             # Printing the file
 
     return Response(
-        file_obj["Body"].read(),
-        mimetype="image/*",
-        headers={"Content-Disposition": "attachment;filename=image"}
+        file_obj["Body"].read(),                                                # This information is piped in from the stream
+        mimetype="image/*",                                                     # This is the media type for the request or mimetype
+        headers={"Content-Disposition": "attachment;filename=image"}            # Telling the F-End that there is an attachment and a filename called image
     )
 
 

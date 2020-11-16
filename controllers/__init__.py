@@ -2,10 +2,10 @@
 
 from controllers.books_controller import books              # Importing the books blueprint
 from controllers.auth_controller import auth                # Importing the auth blueprint
-from controllers.book_images_controller import books_images  # Importing the book images blueprint
+from controllers.book_images_controller import book_images  # Importing the book images blueprint
 
 registerable_controllers = [
     books,
     auth,
-    books_images
+    book_images
 ]

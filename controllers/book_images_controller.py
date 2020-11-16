@@ -46,10 +46,23 @@ def book_image_create(book_id, user=None):
 
 
 @book_images.route("/<int:id>", methods=["GET"])
-@jwt_required
-@verify_user
 def book_image_show(book_id, id, user=None):
-    return "2"
+    book_image = BookImage.query.filter_by(id=id).first()                       # Grab the book from the database
+
+    if not book_image:                                                          # Make usre the book exists
+        return abort(401, description="Invalid book")
+
+    bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])  # Assign the S3
+    filename = book_image.filename
+    file_obj = bucket.Object(f"book_images/{filename}").get()
+
+    print(file_obj)
+
+    return Response(
+        file_obj["Body"].read(),
+        mimetype="image/*",
+        headers={"Content-Disposition": "attachment;filename=image"}
+    )
 
 
 @book_images.route("/<int:id>", methods=["DELETE"])

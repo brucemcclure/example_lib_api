@@ -4,10 +4,10 @@ from flask import Blueprint                 # Using a flask Blueprint because pa
 db_commands = Blueprint("db-custom", __name__)     # Creating the blueprint
 
 
-@db_commands.cli.command("create")          # The 'create' command
-def create_db():                            # Declaration of the function
-    db.create_all()
-    print("Tables created!")
+# @db_commands.cli.command("create")          # The 'create' command
+# def create_db():                            # Declaration of the function
+#     db.create_all()
+#     print("Tables created!")
 
 
 @db_commands.cli.command("drop")

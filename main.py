@@ -31,7 +31,7 @@ def create_app():                                               # Flask conventi
     ma.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(app, db)                                   # Must register the migration on the app and on the db
 
     from commands import db_commands                            # Import the db commands
     app.register_blueprint(db_commands)                         # Register the commands with app

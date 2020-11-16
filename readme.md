@@ -10,5 +10,10 @@
 # Pobably application context
 
 flask db-custom drop
-flask db create
-flask db seed
+flask db-custom seed
+
+`flask db migrate -m "initial migration"`
+
+flask db migrate -m "message about migration"
+flask db upgrade # Runs the migration
+flask db downgrade # Reverses the migration

@@ -33,7 +33,6 @@ def book_create(user=None):                         # Define the create function
 
     new_book = Book()                               # Creating a new instance of book
     new_book.title = book_fieds["title"]            # Update the title
-
     user.books.append(new_book)                     # Add this book to the the user who created it
     db.session.commit()                             # Commit the transaction
     return jsonify(book_schema.dump(new_book))      # Return the json format of the book
